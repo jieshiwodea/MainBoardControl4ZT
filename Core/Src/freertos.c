@@ -25,7 +25,7 @@
 #include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */     
+/* USER CODE BEGIN Includes */
 #include "drv_uart.h"
 /* USER CODE END Includes */
 
@@ -144,11 +144,6 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_init_task */
 __weak void init_task(void const * argument)
 {
-    
-    
-    
-    
-    
 
   /* USER CODE BEGIN init_task */
   /* Infinite loop */

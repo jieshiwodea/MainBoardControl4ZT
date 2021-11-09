@@ -65,10 +65,13 @@ extern ADC_HandleTypeDef hadc2;
 extern ADC_HandleTypeDef hadc3;
 extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim8;
+extern DMA_HandleTypeDef hdma_uart4_tx;
+extern DMA_HandleTypeDef hdma_uart4_rx;
 extern DMA_HandleTypeDef hdma_usart1_tx;
 extern DMA_HandleTypeDef hdma_usart1_rx;
 extern DMA_HandleTypeDef hdma_usart3_rx;
 extern DMA_HandleTypeDef hdma_usart3_tx;
+extern UART_HandleTypeDef huart4;
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart3;
 extern TIM_HandleTypeDef htim6;
@@ -78,7 +81,7 @@ extern TIM_HandleTypeDef htim6;
 /* USER CODE END EV */
 
 /******************************************************************************/
-/*           Cortex-M3 Processor Interruption and Exception Handlers          */ 
+/*           Cortex-M3 Processor Interruption and Exception Handlers          */
 /******************************************************************************/
 /**
   * @brief This function handles Non maskable interrupt.
@@ -344,6 +347,20 @@ void ADC3_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles UART4 global interrupt.
+  */
+void UART4_IRQHandler(void)
+{
+  /* USER CODE BEGIN UART4_IRQn 0 */
+
+  /* USER CODE END UART4_IRQn 0 */
+  HAL_UART_IRQHandler(&huart4);
+  /* USER CODE BEGIN UART4_IRQn 1 */
+
+  /* USER CODE END UART4_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM6 global interrupt.
   */
 void TIM6_IRQHandler(void)
@@ -355,6 +372,34 @@ void TIM6_IRQHandler(void)
   /* USER CODE BEGIN TIM6_IRQn 1 */
 
   /* USER CODE END TIM6_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA2 channel3 global interrupt.
+  */
+void DMA2_Channel3_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Channel3_IRQn 0 */
+
+  /* USER CODE END DMA2_Channel3_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_uart4_rx);
+  /* USER CODE BEGIN DMA2_Channel3_IRQn 1 */
+
+  /* USER CODE END DMA2_Channel3_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA2 channel4 and channel5 global interrupts.
+  */
+void DMA2_Channel4_5_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Channel4_5_IRQn 0 */
+
+  /* USER CODE END DMA2_Channel4_5_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_uart4_tx);
+  /* USER CODE BEGIN DMA2_Channel4_5_IRQn 1 */
+
+  /* USER CODE END DMA2_Channel4_5_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

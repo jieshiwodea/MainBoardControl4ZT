@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -30,9 +30,9 @@
 
 /* USER CODE END 1 */
 
-/** Configure pins as 
-        * Analog 
-        * Input 
+/** Configure pins as
+        * Analog
+        * Input
         * Output
         * EVENT_OUT
         * EXTI
@@ -59,7 +59,7 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(Sleep2_GPIO_Port, Sleep2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, Stepper_LR_Dir_Pin|Stepper_Protect_Sleep_Pin|Stepper_UD_Sleep_Pin|Stepper_Up_Dir_Pin 
+  HAL_GPIO_WritePin(GPIOD, Stepper_LR_Dir_Pin|Stepper_Protect_Sleep_Pin|Stepper_UD_Sleep_Pin|Stepper_Up_Dir_Pin
                           |Stepper_Protect_Dir_Pin|TestPin_Pin|M62429_D_Pin|M62429_CLK_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : PEPin PEPin PEPin PEPin */
@@ -95,9 +95,9 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PDPin PDPin PDPin PDPin 
+  /*Configure GPIO pins : PDPin PDPin PDPin PDPin
                            PDPin PDPin PDPin PDPin */
-  GPIO_InitStruct.Pin = Stepper_LR_Dir_Pin|Stepper_Protect_Sleep_Pin|Stepper_UD_Sleep_Pin|Stepper_Up_Dir_Pin 
+  GPIO_InitStruct.Pin = Stepper_LR_Dir_Pin|Stepper_Protect_Sleep_Pin|Stepper_UD_Sleep_Pin|Stepper_Up_Dir_Pin
                           |Stepper_Protect_Dir_Pin|TestPin_Pin|M62429_D_Pin|M62429_CLK_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;

@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -27,6 +27,8 @@
 UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart3;
+DMA_HandleTypeDef hdma_uart4_tx;
+DMA_HandleTypeDef hdma_uart4_rx;
 DMA_HandleTypeDef hdma_usart1_tx;
 DMA_HandleTypeDef hdma_usart1_rx;
 DMA_HandleTypeDef hdma_usart3_rx;
@@ -100,11 +102,11 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
   /* USER CODE END UART4_MspInit 0 */
     /* UART4 clock enable */
     __HAL_RCC_UART4_CLK_ENABLE();
-  
+
     __HAL_RCC_GPIOC_CLK_ENABLE();
-    /**UART4 GPIO Configuration    
+    /**UART4 GPIO Configuration
     PC10     ------> UART4_TX
-    PC11     ------> UART4_RX 
+    PC11     ------> UART4_RX
     */
     GPIO_InitStruct.Pin = Fiber_UART4_TX_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -116,6 +118,42 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(Fiber_UART4_RX_GPIO_Port, &GPIO_InitStruct);
 
+    /* UART4 DMA Init */
+    /* UART4_TX Init */
+    hdma_uart4_tx.Instance = DMA2_Channel5;
+    hdma_uart4_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    hdma_uart4_tx.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_uart4_tx.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_uart4_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    hdma_uart4_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    hdma_uart4_tx.Init.Mode = DMA_NORMAL;
+    hdma_uart4_tx.Init.Priority = DMA_PRIORITY_LOW;
+    if (HAL_DMA_Init(&hdma_uart4_tx) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    __HAL_LINKDMA(uartHandle,hdmatx,hdma_uart4_tx);
+
+    /* UART4_RX Init */
+    hdma_uart4_rx.Instance = DMA2_Channel3;
+    hdma_uart4_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
+    hdma_uart4_rx.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_uart4_rx.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_uart4_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    hdma_uart4_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    hdma_uart4_rx.Init.Mode = DMA_CIRCULAR;
+    hdma_uart4_rx.Init.Priority = DMA_PRIORITY_LOW;
+    if (HAL_DMA_Init(&hdma_uart4_rx) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    __HAL_LINKDMA(uartHandle,hdmarx,hdma_uart4_rx);
+
+    /* UART4 interrupt Init */
+    HAL_NVIC_SetPriority(UART4_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(UART4_IRQn);
   /* USER CODE BEGIN UART4_MspInit 1 */
 
   /* USER CODE END UART4_MspInit 1 */
@@ -127,11 +165,11 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
   /* USER CODE END USART1_MspInit 0 */
     /* USART1 clock enable */
     __HAL_RCC_USART1_CLK_ENABLE();
-  
+
     __HAL_RCC_GPIOA_CLK_ENABLE();
-    /**USART1 GPIO Configuration    
+    /**USART1 GPIO Configuration
     PA9     ------> USART1_TX
-    PA10     ------> USART1_RX 
+    PA10     ------> USART1_RX
     */
     GPIO_InitStruct.Pin = Jetson_UART1_TX_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -190,11 +228,11 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
   /* USER CODE END USART3_MspInit 0 */
     /* USART3 clock enable */
     __HAL_RCC_USART3_CLK_ENABLE();
-  
+
     __HAL_RCC_GPIOD_CLK_ENABLE();
-    /**USART3 GPIO Configuration    
+    /**USART3 GPIO Configuration
     PD8     ------> USART3_TX
-    PD9     ------> USART3_RX 
+    PD9     ------> USART3_RX
     */
     GPIO_InitStruct.Pin = Ceju_UART3_TX_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -260,13 +298,19 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
   /* USER CODE END UART4_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_UART4_CLK_DISABLE();
-  
-    /**UART4 GPIO Configuration    
+
+    /**UART4 GPIO Configuration
     PC10     ------> UART4_TX
-    PC11     ------> UART4_RX 
+    PC11     ------> UART4_RX
     */
     HAL_GPIO_DeInit(GPIOC, Fiber_UART4_TX_Pin|Fiber_UART4_RX_Pin);
 
+    /* UART4 DMA DeInit */
+    HAL_DMA_DeInit(uartHandle->hdmatx);
+    HAL_DMA_DeInit(uartHandle->hdmarx);
+
+    /* UART4 interrupt Deinit */
+    HAL_NVIC_DisableIRQ(UART4_IRQn);
   /* USER CODE BEGIN UART4_MspDeInit 1 */
 
   /* USER CODE END UART4_MspDeInit 1 */
@@ -278,10 +322,10 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
   /* USER CODE END USART1_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_USART1_CLK_DISABLE();
-  
-    /**USART1 GPIO Configuration    
+
+    /**USART1 GPIO Configuration
     PA9     ------> USART1_TX
-    PA10     ------> USART1_RX 
+    PA10     ------> USART1_RX
     */
     HAL_GPIO_DeInit(GPIOA, Jetson_UART1_TX_Pin|Jetson_UART1_RX_Pin);
 
@@ -302,10 +346,10 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
   /* USER CODE END USART3_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_USART3_CLK_DISABLE();
-  
-    /**USART3 GPIO Configuration    
+
+    /**USART3 GPIO Configuration
     PD8     ------> USART3_TX
-    PD9     ------> USART3_RX 
+    PD9     ------> USART3_RX
     */
     HAL_GPIO_DeInit(GPIOD, Ceju_UART3_TX_Pin|Ceju_UART3_RX_Pin);
 
@@ -319,7 +363,7 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 
   /* USER CODE END USART3_MspDeInit 1 */
   }
-} 
+}
 
 /* USER CODE BEGIN 1 */
 
