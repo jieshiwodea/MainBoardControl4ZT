@@ -302,7 +302,7 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef* tim_pwmHandle)
     __HAL_RCC_TIM8_CLK_ENABLE();
 
     /* TIM8 interrupt Init */
-    HAL_NVIC_SetPriority(TIM8_UP_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(TIM8_UP_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(TIM8_UP_IRQn);
   /* USER CODE BEGIN TIM8_MspInit 1 */
     HAL_TIM_Base_Start_IT(tim_pwmHandle);
@@ -374,7 +374,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
     __HAL_RCC_TIM4_CLK_ENABLE();
 
     /* TIM4 interrupt Init */
-    HAL_NVIC_SetPriority(TIM4_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(TIM4_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(TIM4_IRQn);
   /* USER CODE BEGIN TIM4_MspInit 1 */
     HAL_TIM_Base_Start_IT(tim_baseHandle);
